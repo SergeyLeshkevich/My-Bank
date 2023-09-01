@@ -1,0 +1,8 @@
+percentTransaction:
+  '3'
+accrualPercentage:
+  '1'
+numberAttemptsRequests:
+  '5'
+saveCheck:
+  'false'

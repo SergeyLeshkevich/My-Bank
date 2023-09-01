@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              2117|
+| 2023-09-01                      09:58:01|
+| Transaction type:            TRANSLATION|
+| Sender's bank:               Clever-Bank|
+| Payee's bank:                  Alfa-Bank|
+| Sender's account:               46535465|
+| Beneficiary's account:          63494666|
+| Sum:                              100,00|
+|_________________________________________|

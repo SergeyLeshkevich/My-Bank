@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              2121|
+| 2023-09-01                      09:58:02|
+| Transaction type:                 REFILL|
+| Sender's bank:               Clever-Bank|
+| Payee's bank:                Clever-Bank|
+| Sender's account:               46535465|
+| Beneficiary's account:          46535465|
+| Sum:                              150,00|
+|_________________________________________|

@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              2122|
+| 2023-09-01                      09:58:02|
+| Transaction type:    ACCRUAL_OF_INTEREST|
+| Sender's bank:                 Alfa-Bank|
+| Payee's bank:                  Alfa-Bank|
+| Sender's account:               21342355|
+| Beneficiary's account:          21342355|
+| Sum:                               11,96|
+|_________________________________________|

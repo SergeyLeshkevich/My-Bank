@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              2145|
+| 2023-09-01                      09:58:11|
+| Transaction type:    ACCRUAL_OF_INTEREST|
+| Sender's bank:                 Zero-Bank|
+| Payee's bank:                  Zero-Bank|
+| Sender's account:               34654665|
+| Beneficiary's account:          34654665|
+| Sum:                               11,73|
+|_________________________________________|

@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              2149|
+| 2023-09-01                      09:58:13|
+| Transaction type:    ACCRUAL_OF_INTEREST|
+| Sender's bank:               Clever-Bank|
+| Payee's bank:                Clever-Bank|
+| Sender's account:               66546541|
+| Beneficiary's account:          66546541|
+| Sum:                               11,73|
+|_________________________________________|

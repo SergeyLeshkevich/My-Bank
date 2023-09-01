@@ -1,0 +1,74 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'application'
+}
+
+mainClassName = 'by.leshkevich.Main'
+
+group 'by.leshkevich'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.9.2'
+}
+
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
+
+    implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
+    implementation group: 'at.favre.lib', name: 'bytes', version: '1.6.1'
+
+    implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.3'
+    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.0'
+
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '2.2'
+
+    implementation 'org.postgresql:postgresql:42.2.27'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.1'
+
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    compileOnly('jakarta.servlet:jakarta.servlet-api:5.0.0')
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              2150|
+| 2023-09-01                      09:58:13|
+| Transaction type:    ACCRUAL_OF_INTEREST|
+| Sender's bank:                 Alfa-Bank|
+| Payee's bank:                  Alfa-Bank|
+| Sender's account:               36546315|
+| Beneficiary's account:          36546315|
+| Sum:                               11,73|
+|_________________________________________|

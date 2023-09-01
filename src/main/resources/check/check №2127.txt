@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              2127|
+| 2023-09-01                      09:58:04|
+| Transaction type:    ACCRUAL_OF_INTEREST|
+| Sender's bank:                 Beta-Bank|
+| Payee's bank:                  Beta-Bank|
+| Sender's account:               64674764|
+| Beneficiary's account:          64674764|
+| Sum:                               11,84|
+|_________________________________________|
