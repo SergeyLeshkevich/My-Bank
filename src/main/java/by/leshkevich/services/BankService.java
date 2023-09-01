@@ -108,8 +108,9 @@ public class BankService {
                                            TypeOperation typeOperation, double sumOperation,
                                            String login, String passwordOperation)
             throws AccountException, BalanceException, AuthorisationException {
+       USER_SERVICE.authorisation(login, passwordOperation);
 
-        USER_SERVICE.authorisation(login, passwordOperation);
+        updateBalanceAccount(senderAccount);
 
         if (senderAccount == null) throw new AccountException("Sender account not found");
         if (beneficiaryAccount == null) throw new AccountException("Beneficiary account not found");
@@ -118,6 +119,11 @@ public class BankService {
         if (typeOperation == TypeOperation.WITHDRAWAL || typeOperation == TypeOperation.TRANSLATION) {
             if ((balance - Math.abs(sumOperation)) < 0) throw new BalanceException("Insufficient funds");
         }
+    }
+
+    private void updateBalanceAccount(Account senderAccount) {
+        senderAccount.setBalance(
+        ACCOUNT_SERVICE.getAccountByNumber(senderAccount.getNumber()).getBalance());
     }
 
     private boolean checkingIncomingTransaction(Transaction incominTransaction) {
@@ -139,6 +145,17 @@ public class BankService {
             counter++;
         }
         return transactionFromDAO;
+    }
+
+    private Account requestAccount(String numberAccount) {
+        Account account = null;
+        int counter = 0;
+        while (account == null && counter <= Integer.parseInt(YAML.getValue(AppConstant.CONFIGURATION_YAML,
+                AppConstant.NUMBER_ATTEMPTS_REQUESTS))) {
+            account = ACCOUNT_SERVICE.getAccountByNumber(numberAccount);
+            counter++;
+        }
+        return account;
     }
 
     public boolean delete(int id) {
@@ -172,93 +189,4 @@ public class BankService {
             return null;
         }
     }
-
-    public synchronized String conductTransaction(String numberSenderAccount, String numberBeneficiaryAccount,
-                                                  double sumOperation, String login, String passwordOperation,
-                                                  TypeOperation typeOperation) {
-
-
-        String response;
-        Account senderAccount = ACCOUNT_SERVICE.getAccountByNumber(numberSenderAccount);
-        Account beneficiaryAccount = ACCOUNT_SERVICE.getAccountByNumber(numberBeneficiaryAccount);
-        Transaction transaction = null;
-        try {
-            checkAccountForTransaction(senderAccount, beneficiaryAccount,
-                    typeOperation, sumOperation, login, passwordOperation);
-
-            transaction = performOperation(senderAccount, beneficiaryAccount, sumOperation, typeOperation);
-
-        } catch (AccountException | BalanceException | AuthorisationException e) {
-            response = e.getMessage();
-            return response;
-        }
-
-        response = "Transaction " + transaction.getStatus();
-        return response;
-
-    }
-
-    public void accrueInterest(String numberSenderAccount) {
-        YmlManager ymlManager = new YmlManager();
-        Account senderAccount = requestAccount(numberSenderAccount);
-
-        double sBalance = senderAccount.getBalance();
-        double sumOperation = getFine(sBalance,
-                Integer.parseInt(ymlManager.getValue(AppConstant.CONFIGURATION_YAML, AppConstant.ACCRUAL_PERCENTAGE)));
-        performOperation(senderAccount, senderAccount, sumOperation, TypeOperation.ACCRUAL_OF_INTEREST);
-    }
-
-
-    private Transaction performOperation(Account senderAccount, Account beneficiaryAccount, double sumOperation,
-                                         TypeOperation typeOperation) {
-        Transaction transaction;
-
-        System.out.println(senderAccount.getBank().getName() + " sozdaet tranzakciu " +
-                "-" + senderAccount.getNumber()
-                + "-" + Thread.currentThread().getName());
-
-        transaction = openTransaction(senderAccount.getNumber(), beneficiaryAccount.getNumber(),
-                sumOperation, typeOperation);
-        System.out.println(senderAccount.getBank().getName() + " peredaet tranzakciu " +
-                beneficiaryAccount.getBank().getName() +
-                "-" + senderAccount.getNumber()
-                + "-" + Thread.currentThread().getName());
-
-        System.out.println(beneficiaryAccount.getBank().getName() + " poluchaet tranzakciu ot " +
-                senderAccount.getBank().getName() +
-                "-" + senderAccount.getNumber()
-                + "-" + Thread.currentThread().getName());
-
-        transaction = handleRequestSenderBank(transaction);
-        System.out.println(beneficiaryAccount.getBank().getName() + " vozvraschaet tranzakciu " +
-                senderAccount.getBank().getName() +
-                "-" + senderAccount.getNumber()
-                + "-" + Thread.currentThread().getName());
-
-        System.out.println(senderAccount.getBank().getName() + " prinimaet tranzakciu ot " +
-                beneficiaryAccount.getBank().getName() +
-                "-" + senderAccount.getNumber()
-                + "-" + Thread.currentThread().getName());
-        transaction = handleResponseBeneficiaryBank(transaction);
-        System.out.println("tranzakciia zacrita-" + Thread.currentThread().getName());
-
-        return transaction;
-    }
-
-    private double getFine(double sum, int percent) {
-        return (Math.abs(sum) * percent) / 100;
-    }
-
-    private Account requestAccount(String numberAccount) {
-        Account account = null;
-        int counter = 0;
-        while (account == null && counter <= Integer.parseInt(YAML.getValue(AppConstant.CONFIGURATION_YAML,
-                AppConstant.NUMBER_ATTEMPTS_REQUESTS))) {
-            account = ACCOUNT_SERVICE.getAccountByNumber(numberAccount);
-            counter++;
-        }
-        return account;
-    }
-
-
 }

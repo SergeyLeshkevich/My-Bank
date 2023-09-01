@@ -67,8 +67,8 @@ public class Main {
                                     account = accountService.getAccountByNumberAndIdUser(numberAccount, user.getId());
                                 }
                                 ViewForConsole.showAccountView(account);
-
                                 ViewForConsole.showMenu2View();
+
 
                                 double sumOperation;
                                 String beneficiaryNumberAccount;
@@ -82,7 +82,8 @@ public class Main {
                                         sumOperation = ViewForConsole.enterAmount(console);
                                         passwordOperation = ViewForConsole.enterPassword(console);
 
-                                        System.out.println(transactionManager.conductTransaction(numberAccount, numberAccount,
+
+                                        System.out.println(transactionManager.conductTransaction(account, account,
                                                 sumOperation, login, passwordOperation, TypeOperation.REFILL));
                                     }
                                     break;
@@ -91,7 +92,7 @@ public class Main {
                                         sumOperation = ViewForConsole.enterAmount(console);
                                         passwordOperation = ViewForConsole.enterPassword(console);
 
-                                        System.out.println(transactionManager.conductTransaction(numberAccount, numberAccount,
+                                        System.out.println(transactionManager.conductTransaction(account, account,
                                                 sumOperation, login, passwordOperation, TypeOperation.WITHDRAWAL));
                                     }
                                     break;
@@ -105,7 +106,7 @@ public class Main {
                                             sumOperation = ViewForConsole.enterAmount(console);
                                             passwordOperation = ViewForConsole.enterPassword(console);
 
-                                            System.out.println(transactionManager.conductTransaction(numberAccount, numberAccount,
+                                            System.out.println(transactionManager.conductTransaction(account, accountBeneficiary,
                                                     sumOperation, login, passwordOperation, TypeOperation.REFILL));
                                         } else {
                                             System.out.println("Schet ne prinadlegit " + AppConstant.CLEVER_BANK);
@@ -123,7 +124,7 @@ public class Main {
                                             sumOperation = ViewForConsole.enterAmount(console);
                                             passwordOperation = ViewForConsole.enterPassword(console);
 
-                                            System.out.println(transactionManager.conductTransaction(numberAccount, numberAccount,
+                                            System.out.println(transactionManager.conductTransaction(account, accountBeneficiary,
                                                     sumOperation, login, passwordOperation, TypeOperation.REFILL));
                                         } else {
                                             System.out.println("Schet prinadlegit " + AppConstant.CLEVER_BANK);

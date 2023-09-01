@@ -2,7 +2,7 @@ package by.leshkevich.controllers;
 
 import java.io.*;
 
-import by.leshkevich.Main;
+//import by.leshkevich.Main;
 import by.leshkevich.utils.constants.AppConstant;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -13,7 +13,7 @@ public class RunAppController extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        Main.main(new String[0]);
+//        Main.main(new String[0]);
     }
 
     public void destroy() {
