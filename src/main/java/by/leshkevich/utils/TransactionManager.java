@@ -31,7 +31,7 @@ public class TransactionManager {
     public String conductTransaction(Account senderAccount, Account beneficiaryAccount,
                                      double sumOperation, String login, String passwordOperation,
                                      TypeOperation typeOperation) {
-        logger.info("начало банковской операции. Входящие параметры:{},{},{},{},{},{}", senderAccount, beneficiaryAccount, sumOperation, login, passwordOperation, typeOperation);
+        logger.info("start of a banking operation. Incoming parameters:{},{},{},{},{},{}", senderAccount, beneficiaryAccount, sumOperation, login, passwordOperation, typeOperation);
         String response;
 
         Transaction transaction = null;
@@ -59,14 +59,14 @@ public class TransactionManager {
      * Interest rate is specified in conf.yml
      */
     public void accrueInterest(Account senderAccount) {
-        logger.info("Начисление процентов: {}", senderAccount);
+        logger.info("Interest accrual: {}", senderAccount);
         YmlManager ymlManager = new YmlManager();
         double sBalance = senderAccount.getBalance();
 
         double sumOperation = getFine(sBalance,
                 Integer.parseInt(ymlManager.getValue(AppConstant.CONFIGURATION_YAML, AppConstant.ACCRUAL_PERCENTAGE)));
         Transaction transaction = performOperation(senderAccount, senderAccount, sumOperation, TypeOperation.ACCRUAL_OF_INTEREST);
-        logger.info("Начисление процентов: {}", transaction);
+        logger.info("Interest accrual: {}", transaction);
     }
 
     /**
@@ -109,9 +109,9 @@ public class TransactionManager {
      * The rate is specified in the file conf.yml
      */
     private double getFine(double sum, int percent) {
-        logger.info("Расчет суммы начисления:{} {}", sum, percent);
+        logger.info("Calculation of the accrual amount:{} {}", sum, percent);
         double sumWithPercent = (Math.abs(sum) * percent) / 100;
-        logger.info("Сумма с процентом {}", sumWithPercent);
+        logger.info("Amount with interest {}", sumWithPercent);
         return sumWithPercent;
     }
 }
