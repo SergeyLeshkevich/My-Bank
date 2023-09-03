@@ -60,11 +60,10 @@ public class UserService {
 
     /**
      * method that implements user authorization
-     * @throws throws an exception AuthorisationException if the user is not found or the password is incorrect
      * @return returns true on success
      */
     public boolean authorisation(String login, String password) throws AuthorisationException {
-        logger.info("Авторизация. Входящие параметры:{},{}", login, password);
+        logger.info("Authorization. Incoming parameters:{},{}", login, password);
 
         boolean auth = false;
         if (getUser(login) == null) throw new AuthorisationException("User is not found");
@@ -76,10 +75,10 @@ public class UserService {
                 if (!auth) throw new AuthorisationException("Incorrect password");
             }
         } catch (DAOException e) {
-            logger.info("Авторизация:{}", false);
+            logger.info("Authorization:{}", false);
             auth = false;
         }
-        logger.info("Авторизация:{}", !auth);
+        logger.info("Authorization:{}", !auth);
         return true;
     }
 
@@ -90,14 +89,14 @@ public class UserService {
      * @return returns true on success
      */
     public User getUser(String login) {
-        logger.info("Получение пользователя:{}", login);
+        logger.info("Get user:{}", login);
         User user;
         try {
             user = USER_DAO.getUser(login);
         } catch (DAOException e) {
             user = null;
         }
-        logger.info("Пользователь:{}", user);
+        logger.info("User:{}", user);
         return user;
     }
 
@@ -108,14 +107,14 @@ public class UserService {
      * @return returns true on success
      */
     public boolean delete(int id) {
-        logger.info("Удаление пользователя:{}", id);
+        logger.info("Deleting a user:{}", id);
         boolean status;
         try {
             status = USER_DAO.removeUser(id);
-            logger.info("Удаление пользователя:{}", status);
+            logger.info("Deleting a user:{}", status);
             return status;
         } catch (DAOException e) {
-            logger.info("Удаление пользователя:{}", false);
+            logger.info("Deleting a user:{}", false);
             return false;
         }
     }
@@ -127,14 +126,14 @@ public class UserService {
      * @return returns true on success
      */
     public boolean updateLastname(User user) {
-        logger.info("Изменение пользователя:{}", user);
+        logger.info("Deleting a user:{}", user);
         boolean status;
         try {
             status = USER_DAO.updateLastname(user);
-            logger.info("Изменение пользователя:{}", status);
+            logger.info("Deleting a user:{}", status);
             return status;
         } catch (DAOException e) {
-            logger.info("Изменение пользователя:{}", false);
+            logger.info("Deleting a user:{}", false);
 
             return false;
         }

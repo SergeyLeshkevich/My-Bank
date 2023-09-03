@@ -40,7 +40,7 @@ public class BankService {
      */
     public Transaction openTransaction(String numberSenderAccount, String numberBeneficiaryAccount,
                                        double sumOperation, TypeOperation typeOperation) {
-        logger.info("Открытие транзакции senderBank: {},{},{},{}", numberSenderAccount, numberBeneficiaryAccount, sumOperation, typeOperation);
+        logger.info("Opening a transaction senderBank: {},{},{},{}", numberSenderAccount, numberBeneficiaryAccount, sumOperation, typeOperation);
         Account senderAccount = requestAccount(numberSenderAccount);
         Account beneficiaryAccount = requestAccount(numberBeneficiaryAccount);
 
@@ -67,13 +67,13 @@ public class BankService {
                 sumOperation = sumOperation * (-1);
             }
         }
-        logger.info("Перевод суммы с senderAccount:{},{}", numberSenderAccount, sumOperation);
+        logger.info("Transfer amount from senderAccount:{},{}", numberSenderAccount, sumOperation);
         boolean status = ACCOUNT_SERVICE.updateAccount(numberSenderAccount, sumOperation);
-        logger.info("Перевод: {}", status);
+        logger.info("Translation: {}", status);
 
         if (!status) return null;
         TRANSACTION_SERVICE.saveTransaction(transaction);
-        logger.info("Передача транзакции в beneficiaryBank: {}", transaction);
+        logger.info("Sending a transaction to beneficiaryBank: {}", transaction);
         return transaction;
     }
 
@@ -84,7 +84,7 @@ public class BankService {
      * @return after checks, returns the Transaction object of the sender's bank with a changed status
      */
     public Transaction handleRequestSenderBank(Transaction transaction) {
-        logger.info("Получение транзакции от senderBank: {}", transaction);
+        logger.info("Receive transaction from senderBank: {}", transaction);
         if (checkingIncomingTransaction(transaction)) {
             Account beneficiaryAccount = transaction.getBeneficiaryAccount();
             String numberBeneficiaryAccount = beneficiaryAccount.getNumber();
@@ -93,14 +93,14 @@ public class BankService {
             boolean status = false;
 
             if (transaction.getTypeOperation().equals(TypeOperation.TRANSLATION.getMessage())) {
-                logger.info("Зачисление денег на BeneficiaryAccount: {},{}", numberBeneficiaryAccount, Math.abs(sumOperation));
+                logger.info("Crediting money to BeneficiaryAccount: {},{}", numberBeneficiaryAccount, Math.abs(sumOperation));
                 status = ACCOUNT_SERVICE.updateAccount(numberBeneficiaryAccount, Math.abs(sumOperation));
             }
             if (status ||
                     transaction.getTypeOperation().equals(TypeOperation.REFILL.getMessage())
                     || transaction.getTypeOperation().equals(TypeOperation.WITHDRAWAL.getMessage())
                     || transaction.getTypeOperation().equals(TypeOperation.ACCRUAL_OF_INTEREST.getMessage())) {
-                logger.info("Изменение статуса транзакции: {}", transaction);
+                logger.info("Changing the status of a transaction: {}", transaction);
                 transaction.setStatus(Status.COMPLETED.getMessage());
             } else {
                 transaction.setStatus(Status.REJECTED.getMessage());
@@ -109,16 +109,16 @@ public class BankService {
         } else {
             transaction.setStatus(Status.REJECTED.getMessage());
         }
-        logger.info("Cтатус транзакции изменен: {}", transaction);
+        logger.info("Transaction status changed: {}", transaction);
         if (transaction.getTypeOperation().equals(TypeOperation.TRANSLATION.getMessage())
                 || transaction.getTypeOperation().equals(TypeOperation.WITHDRAWAL.getMessage())) {
             double amount = transaction.getAmount() * (-1);
-            logger.info("Изменение суммы транзакции в зависимости от типа: {}", transaction);
+            logger.info("Changing the transaction amount depending on the type: {}", transaction);
             transaction.setAmount(amount);
         }
 
         TRANSACTION_SERVICE.updateStatusAndAmount(transaction);
-        logger.info("Возврат транзакции в senderBank: {}", transaction);
+        logger.info("Revert transaction to senderBank: {}", transaction);
         return transaction;
     }
 
@@ -130,11 +130,11 @@ public class BankService {
      * @return after checks, returns the Transaction object of the beneficiary's bank with a changed status
      */
     public Transaction handleResponseBeneficiaryBank(Transaction transaction) {
-        logger.info("Получение транзакции от senderBank: {}", transaction);
+        logger.info("Receive transaction from senderBank: {}", transaction);
         if (transaction.getStatus().equals(Status.REJECTED.getMessage())) {
-            logger.info("Откат транзакции: {}", transaction);
+            logger.info("Rolling back a transaction: {}", transaction);
             boolean status = ACCOUNT_SERVICE.updateAccount(transaction.getSenderAccount().getNumber(), transaction.getAmount());
-            logger.info("Перевод: {}", status);
+            logger.info("Translation: {}", status);
         } else {
             if (Boolean.parseBoolean(YAML.getValue(AppConstant.CONFIGURATION_YAML, AppConstant.SAVE_CHECK)))
                 TRANSACTION_SERVICE.createCheck(transaction);
@@ -154,11 +154,11 @@ public class BankService {
                                           TypeOperation typeOperation, double sumOperation,
                                           String login, String passwordOperation)
             throws AccountException, BalanceException, AuthorisationException {
-        logger.info("Проверка входящих параметров. Входящие параметры:{},{},{},{},{},{}", senderAccount, beneficiaryAccount,
+        logger.info("Validation of incoming parameters. Incoming parameters:{},{},{},{},{},{}", senderAccount, beneficiaryAccount,
                 typeOperation, sumOperation, login, passwordOperation);
         USER_SERVICE.authorisation(login, passwordOperation);
 
-        logger.info("Обновление баланса. Входящие параметры:{}", senderAccount);
+        logger.info("Balance update. Incoming parameters:{}", senderAccount);
         senderAccount.setBalance(
                 ACCOUNT_SERVICE.getAccountByNumber(senderAccount.getNumber()).getBalance());
 
@@ -169,7 +169,7 @@ public class BankService {
         if (typeOperation == TypeOperation.WITHDRAWAL || typeOperation == TypeOperation.TRANSLATION) {
             if ((balance - Math.abs(sumOperation)) < 0) throw new BalanceException("Insufficient funds");
         }
-        logger.info("Баланс обнавлен");
+        logger.info("Balance updated");
     }
 
     /**
@@ -178,7 +178,7 @@ public class BankService {
      * @return returns true on success
      */
     private boolean checkingIncomingTransaction(Transaction incominTransaction) {
-        logger.info("Проверка наличия транзакции в БД:{}", incominTransaction);
+        logger.info("Checking if a transaction exists in the database:{}", incominTransaction);
         boolean isTransactionOK = false;
         Transaction transactionFromDAO = null;
         int counter = 0;
@@ -190,7 +190,7 @@ public class BankService {
         if (transactionFromDAO != null) {
             isTransactionOK = true;
         }
-        logger.info("Проверка: {}", isTransactionOK);
+        logger.info("Examination: {}", isTransactionOK);
         return isTransactionOK;
     }
 
@@ -201,7 +201,7 @@ public class BankService {
      * @param numberAccount bank account number
      */
     private Account requestAccount(String numberAccount) {
-        logger.info("запрос счета: {}", numberAccount);
+        logger.info("invoice request: {}", numberAccount);
         Account account = null;
         int counter = 0;
         while (account == null && counter <= Integer.parseInt(YAML.getValue(AppConstant.CONFIGURATION_YAML,
@@ -219,14 +219,14 @@ public class BankService {
      * @return returns true on success
      */
     public boolean delete(int id) {
-        logger.info("удаления банка: {}", id);
+        logger.info("deleting a bank: {}", id);
         boolean status;
         try {
             status = BANK_DAO.delete(id);
-            logger.info("банк удален: {}", status);
+            logger.info("bank deleted: {}", status);
             return status;
         } catch (DAOException e) {
-            logger.info("банк удален: {}", false);
+            logger.info("bank deleted: {}", false);
             return false;
         }
     }
@@ -238,14 +238,14 @@ public class BankService {
      * @return returns a Transaction object with an id assigned to id
      */
     public Bank save(Bank bank) {
-        logger.info("сохранение банка: {}", bank);
+        logger.info("saving the bank: {}", bank);
         Bank saveBank;
         try {
             saveBank = BANK_DAO.save(bank);
-            logger.info("банк: {}", saveBank);
+            logger.info("bank: {}", saveBank);
             return saveBank;
         } catch (DAOException e) {
-            logger.info("банк: {}", "пусто");
+            logger.info("bank: {}", "empty");
             return null;
         }
     }
@@ -257,15 +257,15 @@ public class BankService {
      * @return returns true on success
      */
     public boolean update(Bank bank) {
-        logger.info("изменение банка: {}", bank);
+        logger.info("bank change: {}", bank);
         boolean status;
         try {
             status = BANK_DAO.update(bank);
-            logger.info("банк изменен: {}", status);
+            logger.info("bank changed: {}", status);
 
             return status;
         } catch (DAOException e) {
-            logger.info("банк изменен: {}", false);
+            logger.info("bank changed: {}", false);
             return false;
         }
     }
@@ -276,14 +276,14 @@ public class BankService {
      * @return returns a Bank object
      */
     public Bank get(int id) {
-        logger.info("получение банка: {}", id);
+        logger.info("getting a bank: {}", id);
         Bank saveBank;
         try {
             saveBank = BANK_DAO.get(id);
-            logger.info("банк: {}", id);
+            logger.info("bank: {}", id);
             return saveBank;
         } catch (DAOException e) {
-            logger.info("банк: {}", "пусто");
+            logger.info("bank: {}", "empty");
             return null;
         }
     }

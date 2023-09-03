@@ -30,13 +30,13 @@ public class TransactionService {
      * @return returns true on success
      */
     public boolean updateStatus(Transaction transaction) {
-        logger.info("Обновление статуса транзакции: {}", transaction);
+        logger.info("Transaction status update: {}", transaction);
         boolean status;
         try {
             status = TRANSACTION_DAO.updateStatus(transaction);
             return status;
         } catch (DAOException e) {
-            logger.info("Статус: {}", false);
+            logger.info("Status: {}", false);
             return false;
         }
     }
@@ -48,14 +48,14 @@ public class TransactionService {
      * @return returns true on success
      */
     public boolean updateStatusAndAmount(Transaction transaction) {
-        logger.info("Обновление статуса и суммы транзакции: {}", transaction);
+        logger.info("Updating the status and amount of a transaction: {}", transaction);
         boolean status;
         try {
             status = TRANSACTION_DAO.updateStatusAndAmount(transaction);
-            logger.info("Статус: {}", status);
+            logger.info("Status: {}", status);
             return status;
         } catch (DAOException e) {
-            logger.info("Статус: {}", false);
+            logger.info("Status: {}", false);
             return false;
         }
     }
@@ -66,7 +66,7 @@ public class TransactionService {
      * @param transaction required fields in the Transaction object must be id ,status and amount
      */
     public void createCheck(Transaction transaction) {
-        logger.info("создание чека: {}", transaction);
+        logger.info("creating a check: {}", transaction);
         String check = StringsForFile.StringForCheck(transaction);
         FileHandler.writeFileTXT(AppConstant.PATH_CHECK +
                 "check №" +
@@ -83,14 +83,14 @@ public class TransactionService {
      * @return returns a Transaction object with an id assigned to id
      */
     public Transaction saveTransaction(Transaction transaction) {
-        logger.info("Сохранение транзакции: {}", transaction);
+        logger.info("Saving a transaction: {}", transaction);
         Transaction transactionBD;
         try {
             transactionBD = TRANSACTION_DAO.save(transaction);
         } catch (DAOException e) {
             transactionBD = null;
         }
-        logger.info("Транзакция сохранена: {}", transaction);
+        logger.info("Transaction Saved: {}", transaction);
         return transactionBD;
     }
 
@@ -100,7 +100,7 @@ public class TransactionService {
      * @return returns a Transaction object
      */
     public Transaction getTransaction(int id) {
-        logger.info("получение транзакции {}", id);
+        logger.info("receiving a transaction {}", id);
         Transaction transaction;
         try {
             transaction = TRANSACTION_DAO.get(id);
@@ -108,7 +108,7 @@ public class TransactionService {
             //Log
             transaction = null;
         }
-        logger.info("транзакция {}", transaction);
+        logger.info("transaction {}", transaction);
         return transaction;
     }
 
@@ -118,14 +118,14 @@ public class TransactionService {
      * @return returns true on success
      */
     public boolean delete(int id) {
-        logger.info("удаление транзакции {}", id);
+        logger.info("deleting a transaction {}", id);
 
         try {
             boolean isDel = TRANSACTION_DAO.delete(id);
-            logger.info("удаление транзакции {}", isDel);
+            logger.info("deleting a transaction {}", isDel);
             return isDel;
         } catch (DAOException e) {
-            logger.info("удаление транзакции {}", false);
+            logger.info("deleting a transaction {}", false);
             return false;
         }
     }
@@ -140,12 +140,12 @@ public class TransactionService {
      */
     public List<Transaction> getAllTransactionsListForPeriod(String accountNumber, LocalDateTime dateFor, LocalDateTime dateBefore) {
         try {
-            logger.info("Получение списка транзакций за период: {},{},{}", accountNumber, dateFor, dateBefore);
+            logger.info("Getting a list of transactions for a period: {},{},{}", accountNumber, dateFor, dateBefore);
             List<Transaction> list = TRANSACTION_DAO.getListForPeriod(accountNumber, dateFor, dateBefore);
-            logger.info("Список за период: {}", list);
+            logger.info("List for the period: {}", list);
             return list;
         } catch (DAOException e) {
-            logger.info("Список за период: {}", "пусто");
+            logger.info("List for the period: {}", "пусто");
             return new ArrayList<>();
         }
     }
@@ -154,9 +154,9 @@ public class TransactionService {
      * the method is designed to receive a penalty for a transaction to the account of another bank
      */
     public double getFine(double sum, int percent) {
-        logger.info("Рассчет суммы пени: {},{}", sum, percent);
+        logger.info("Calculation of the penalty amount: {},{}", sum, percent);
         double fine = (Math.abs(sum) * percent) / 100;
-        logger.info("Пеня: {}", fine);
+        logger.info("penalty: {}", fine);
         return fine;
     }
 

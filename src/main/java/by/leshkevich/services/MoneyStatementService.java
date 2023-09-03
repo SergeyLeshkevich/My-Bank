@@ -24,15 +24,15 @@ public class MoneyStatementService {
      * @return  returns null if the object could not be formed
      */
     public MoneyStatement getMoneyStatement(String numberSenderAccount, LocalDateTime dateFor, LocalDateTime dateBefore) {
-        logger.info("Получение выписки {}{}{}", numberSenderAccount, dateFor, dateBefore);
+        logger.info("Getting an extract {}{}{}", numberSenderAccount, dateFor, dateBefore);
         MoneyStatement moneyStatement;
         try {
             moneyStatement = MONEY_STATEMENT.getMoneyStatement(numberSenderAccount, dateFor, dateBefore);
-            logger.info("Выписка {}", moneyStatement);
+            logger.info("Extract {}", moneyStatement);
             return moneyStatement;
 
         } catch (DAOException e) {
-            logger.info("Выписка {}", "пусто");
+            logger.info("Extract {}", "empty");
             return null;
         }
     }

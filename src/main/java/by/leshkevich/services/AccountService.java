@@ -28,15 +28,15 @@ public class AccountService {
      * @return returns an arraylist with Accounts objects. If nothing is found, an empty list is returned
      */
     public List<Account> getListByIdUser(int idUser) {
-        logger.info("Получение списка счетов: {}", idUser);
+        logger.info("Getting a list of accounts: {}", idUser);
         List<Account> list;
 
         try {
             list = ACCOUNT_DAO.getListByIdUser(idUser);
-            logger.info("списк счетов: {}", list);
+            logger.info("list of accounts: {}", list);
             return list;
         } catch (DAOException e) {
-            logger.info("списк счетов: {}", "пусто");
+            logger.info("list of accounts: {}", "empty");
             return new ArrayList<>();
         }
     }
@@ -47,14 +47,14 @@ public class AccountService {
      * @return returns Account object
      */
     public Account getAccountByNumber(String number) {
-        logger.info("Получение счета: {}", number);
+        logger.info("Getting an invoice: {}", number);
         Account account;
         try {
             account = ACCOUNT_DAO.get(number);
-            logger.info("Cчет: {}", account);
+            logger.info("Account: {}", account);
             return account;
         } catch (DAOException e) {
-            logger.info("Cчет: {}", "пусто");
+            logger.info("Account: {}", "empty");
             return null;
         }
     }
@@ -66,15 +66,15 @@ public class AccountService {
      */
 
     public boolean updateAccount(String numberAccount, double sumOperation) {
-        logger.info("Изменение счета: {}{}", numberAccount, sumOperation);
+        logger.info("Account change: {}{}", numberAccount, sumOperation);
         boolean status;
         try {
             status = ACCOUNT_DAO.updateBalance(numberAccount, sumOperation);
-            logger.info("Изменение счета: {}", status);
+            logger.info("Account change: {}", status);
             return status;
 
         } catch (DAOException e) {
-            logger.info("Изменение счета: {}", false);
+            logger.info("Account change: {}", false);
 
             return false;
         }
@@ -86,16 +86,16 @@ public class AccountService {
      * @return returns an HashMap with Account objects. If nothing is found, an empty HashMap is returned
      */
     public Map<String, Account> getAllAccounts() {
-        logger.info("Получение списка всех счетов");
+        logger.info("Getting a list of all accounts");
 
         Map<String, Account> accountMap;
         try {
             accountMap = ACCOUNT_DAO.getAllAccounts();
         } catch (DAOException e) {
-            logger.info("Получение списка всех счетов: {}", "пусто");
+            logger.info("Getting a list of all accounts: {}", "empty");
             accountMap = new HashMap<>();
         }
-        logger.info("Получение списка всех счетов: {}", accountMap);
+        logger.info("Getting a list of all accounts: {}", accountMap);
 
         return accountMap;
     }
@@ -106,14 +106,14 @@ public class AccountService {
      * @return returns true on success
      */
     public boolean delete(int id) {
-        logger.info("удаление счета: {}", id);
+        logger.info("account deletion: {}", id);
         boolean status;
         try {
             status = ACCOUNT_DAO.delete(id);
-            logger.info("удаление счета: {}", status);
+            logger.info("account deletion: {}", status);
             return status;
         } catch (DAOException e) {
-            logger.info("удаление счета: {}", false);
+            logger.info("account deletion: {}", false);
             return false;
         }
     }
@@ -125,15 +125,15 @@ public class AccountService {
      * @return returns a Account object with an id assigned to id
      */
     public Account save(Account account) {
-        logger.info("Сохранение счета: {}", account);
+        logger.info("Saving an account: {}", account);
         Account accountSave;
         try {
             accountSave = ACCOUNT_DAO.save(account);
-            logger.info("Сохранение счета: {}", accountSave);
+            logger.info("Saving an account: {}", accountSave);
             return accountSave;
 
         } catch (DAOException e) {
-            logger.info("Сохранение счета: {}", false);
+            logger.info("Saving an account: {}", false);
             return null;
         }
     }
