@@ -1,6 +1,5 @@
 package by.leshkevich.controllers.userControllers;
 
-import by.leshkevich.controllers.transactionControllers.TransactionAbstractController;
 import by.leshkevich.utils.constants.AppConstant;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;

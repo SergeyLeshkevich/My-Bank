@@ -17,9 +17,9 @@ public class UpdateAccountController extends AccountAbstractController {
         double balance = Double.parseDouble(request.getParameter(AppConstant.BALANCE_PARAMETER));
         String number = request.getParameter(AppConstant.NUMBER_PARAMETER);
         PrintWriter out = response.getWriter();
-        if(accountService.updateAccount(number,balance)){
+        if (accountService.updateAccount(number, balance)) {
             out.println("status 200");
-        }else {
+        } else {
             out.println("status 500");
         }
 

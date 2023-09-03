@@ -14,26 +14,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class implements the MoneyStatementDAO interface and implements its methods for working with the database.
+ */
 public class TransactionPostgresDAOImpl implements TransactionDAO {
 
-    @Override
-    public List<Transaction> getAllTransactionsBySenderAccount(String numberSenderAccount) throws DAOException {
-        List<Transaction> list = null;
-
-        try (Connection cn = ConnectionManager.getConnection();
-             PreparedStatement pst1 = cn.prepareStatement(SQLRequest.SELECT_TRANSACTION_BY_NUMBER_SENDER_ACCOUNT);
-             PreparedStatement pst2 = cn.prepareStatement(SQLRequest.SELECT_BENEFICIARY_USER)) {
-            pst1.setString(1, numberSenderAccount);
-
-            list = transactionsListFabric(pst1, pst2);
-
-        } catch (SQLException e) {
-            throw new DAOException(e);
-        }
-        return list;
-    }
-
-
+    /**
+     * Transaction object save method in database PostgresQL
+     */
     @Override
     public Transaction save(Transaction transaction) throws DAOException {
         try (Connection cn = ConnectionManager.getConnection();
@@ -60,6 +50,9 @@ public class TransactionPostgresDAOImpl implements TransactionDAO {
         return transaction;
     }
 
+    /**
+     * get method Transaction object from database PostgresQL
+     */
     @Override
     public Transaction get(int idTransaction) throws DAOException {
         Transaction transaction = null;
@@ -77,6 +70,9 @@ public class TransactionPostgresDAOImpl implements TransactionDAO {
         return transaction;
     }
 
+    /**
+     * Transaction object deletion method from database PostgresQL
+     */
     @Override
     public boolean delete(int transactionId) throws DAOException {
         boolean isDel = false;
@@ -95,6 +91,9 @@ public class TransactionPostgresDAOImpl implements TransactionDAO {
     }
 
 
+    /**
+     * method for getting a list of all Transaction objects from database PostgresQL
+     */
     @Override
     public List<Transaction> getListForPeriod(String numberSenderAccount, LocalDateTime dateFor, LocalDateTime dateBefore) throws DAOException {
         List<Transaction> list = null;
@@ -114,6 +113,12 @@ public class TransactionPostgresDAOImpl implements TransactionDAO {
         return list;
     }
 
+    /**
+     * method for obtaining the creation of a list of Transaction objects by incoming parameters
+     *
+     * @param pst1 PreparedStatement to get list of Transaction objects
+     * @param pst2 PreparedStatement to get the User object
+     */
     private List<Transaction> transactionsListFabric(PreparedStatement pst1, PreparedStatement pst2) throws SQLException {
         List<Transaction> list = new ArrayList<>();
         Transaction transaction = null;
@@ -184,6 +189,10 @@ public class TransactionPostgresDAOImpl implements TransactionDAO {
         return list;
 
     }
+
+    /**
+     * method for updating the status field of the Transaction object from database PostgresQL
+     */
     @Override
     public boolean updateStatus(Transaction transaction) throws DAOException {
         boolean isUpdate = false;
@@ -191,7 +200,7 @@ public class TransactionPostgresDAOImpl implements TransactionDAO {
              PreparedStatement pst1 = cn.prepareStatement(SQLRequest.UPDATE_TRANSACTION_STATUS)) {
 
             pst1.setString(1, transaction.getStatus());
-            pst1.setDouble(2, transaction.getId());
+            pst1.setInt(2, transaction.getId());
 
             int res = pst1.executeUpdate();
 
@@ -204,4 +213,30 @@ public class TransactionPostgresDAOImpl implements TransactionDAO {
         }
         return isUpdate;
     }
+
+    /**
+     * method for updating the status and amount fields of the Transaction object from database PostgresQL
+     */
+    @Override
+    public boolean updateStatusAndAmount(Transaction transaction) throws DAOException {
+        boolean isUpdate = false;
+        try (Connection cn = ConnectionManager.getConnection();
+             PreparedStatement pst1 = cn.prepareStatement(SQLRequest.UPDATE_TRANSACTION_STATUS_END_AMOUNT)) {
+
+            pst1.setString(1, transaction.getStatus());
+            pst1.setDouble(2, transaction.getAmount());
+            pst1.setInt(3, transaction.getId());
+
+            int res = pst1.executeUpdate();
+
+            if (res > 0) {
+                isUpdate = true;
+            }
+
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+        return isUpdate;
+    }
+
 }

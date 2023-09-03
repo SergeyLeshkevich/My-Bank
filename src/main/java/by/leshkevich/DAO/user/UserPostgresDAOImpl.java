@@ -9,9 +9,15 @@ import by.leshkevich.utils.security.PasswordHashing;
 
 import java.sql.*;
 
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class implements the UserDAO interface and implements its methods for working with the database.
+ */
 public class UserPostgresDAOImpl implements UserDAO {
-
-
+    /**
+     * get method User object from database PostgresQL
+     */
     @Override
     public User getUser(String login) throws DAOException {
         User user = null;
@@ -37,6 +43,9 @@ public class UserPostgresDAOImpl implements UserDAO {
         return user;
     }
 
+    /**
+     * get method field password User object from database PostgresQL
+     */
     @Override
     public String getPassword(String login) throws DAOException {
         String passwordDB = "";
@@ -69,6 +78,9 @@ public class UserPostgresDAOImpl implements UserDAO {
 
     }
 
+    /**
+     * User object save method in database PostgresQL
+     */
     @Override
     public int save(User user, String password) throws DAOException {
         int idUserBD = 0;
@@ -103,6 +115,9 @@ public class UserPostgresDAOImpl implements UserDAO {
         return idUserBD;
     }
 
+    /**
+     * User object deletion method from database PostgresQL
+     */
     @Override
     public boolean removeUser(int idUser) throws DAOException {
         boolean isDel = false;
@@ -121,8 +136,11 @@ public class UserPostgresDAOImpl implements UserDAO {
         return isDel;
     }
 
+    /**
+     * method for updating the status field of the User object from database PostgresQL
+     */
     @Override
-    public boolean updateLastname(User user){
+    public boolean updateLastname(User user) {
         boolean isUpdate = false;
         try (Connection cn = ConnectionManager.getConnection();
              PreparedStatement pst1 = cn.prepareStatement(SQLRequest.UPDATE_USER_LASTNAME_BY_LOGIN)) {

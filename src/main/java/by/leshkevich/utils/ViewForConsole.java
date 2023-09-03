@@ -9,7 +9,7 @@ public class ViewForConsole {
         System.out.println("Nomer scheta: " + account.getNumber());
         System.out.println("Bank: " + account.getBank().getName());
         System.out.println("Balans: " + account.getBalance());
-        System.out.println("Data otcritia: " + account.getOpenData().dateFormat());
+        System.out.println("Data otcritia: " + account.getOpenDate().dateFormat());
         System.out.println("__________________________");
     }
     public static double enterAmount(Scanner console){

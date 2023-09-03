@@ -1,5 +1,10 @@
 package by.leshkevich.utils.db;
 
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class contains static final fields for working with SQL queries and database
+ */
 public class SQLRequest {
     public static final String ID_COLUMN = "id";
     public static final String LOGIN_COLUMN = "login";
@@ -121,32 +126,6 @@ public class SQLRequest {
                     "tr.date<? " +
                     "and " +
                     "number_sender_account=?";
-    public static final String SELECT_TRANSACTION_BY_NUMBER_SENDER_ACCOUNT =
-            "select " +
-                    "       tr.id," +
-                    "       tr.date," +
-                    "       sa.id," +
-                    "       sa.number," +
-                    "       tr.number_beneficiary_account," +
-                    "       asu.id," +
-                    "       asu.login," +
-                    "       asu.lastname," +
-                    "       asu.firstname," +
-                    "       asb.id," +
-                    "       asb.name," +
-                    "       sa.balance," +
-                    "       sa.date," +
-                    "       bb.id," +
-                    "       bb.name," +
-                    "       tr.type_operation," +
-                    "       tr.amount, " +
-                    "       tr.status " +
-                    "from transactions as tr " +
-                    "         inner join accounts as sa on sa.number = number_sender_account " +
-                    "         inner join users as asu on asu.id = id_user " +
-                    "         inner join banks as asb on asb.id = id_bank " +
-                    "         inner join banks as bb on bb.id = id_beneficiary_bank " +
-                    "where tr.number_sender_account = ?";
 
     public static final String DELETE_ACCOUNT_BY_ID = "delete from accounts where id=?";
     public static final String DELETE_TRANSACTION_BY_ID = "delete from transactions where id=?";
@@ -187,19 +166,6 @@ public class SQLRequest {
                     "as u " +
                     "inner join accounts " +
                     "on u.id = id_user and number=?";
-    public static final String SELECT_ACCOUNT_BY_NUMBER_AND_USER_ID =
-            "select " +
-                    "ac.id, " +
-                    "ac.number, " +
-                    "ac.id_user, " +
-                    "ac.id_bank, " +
-                    "ac.balance,  " +
-                    "ac.date " +
-                    "from accounts " +
-                    "as ac " +
-                    "where number=? " +
-                    "and " +
-                    "id_user=?";
     public static final String SELECT_TRANSACTION_BY_ID =
             "select " +
                     "tr.id, " +
@@ -230,6 +196,13 @@ public class SQLRequest {
                     "transactions " +
                     "set status=? " +
                     "where id=?";
+
+    public static final String UPDATE_TRANSACTION_STATUS_END_AMOUNT =
+            "update " +
+                    "transactions " +
+                    "set status=?, " +
+                    "amount=? " +
+                    "where id=?";
     public static final String SELECT_ALL_ACCOUNTS_LIST =
             "select " +
                     "ac.id, " +
@@ -251,11 +224,52 @@ public class SQLRequest {
                     "banks " +
                     "set name=? " +
                     "where id=?";
-    public static final String DELETE_USER_BY_ID = "with del1 as (delete  from users where id=?) delete from passwords where id_user=?";
+    public static final String DELETE_USER_BY_ID = "with del1 as (delete  from users where id=?)" +
+            " delete from passwords where id_user=?";
     public static final String UPDATE_USER_LASTNAME_BY_LOGIN =
             "update " +
                     "users " +
                     "set lastname=? " +
                     "where login=?";
     ;
+
+    public static final String SELECT_MONEY_STATEMENT =
+            "select " +
+                    "asb.name, " +
+                    "asu.lastname, " +
+                    "asu.firstname, " +
+                    "sa.number, " +
+                    "sa.date, " +
+                    "sa.balance, " +
+                    "(SELECT " +
+                    "SUM(" +
+                    "CASE WHEN " +
+                    "tr.amount > 0 " +
+                    "AND tr.type_operation IN ('REFILL', 'ACCRUAL_OF_INTEREST') " +
+                    "THEN tr.amount " +
+                    "ELSE 0 END) " +
+                    "FROM transactions as tr " +
+                    "WHERE tr.status <> 'REJECTED' " +
+                    "AND tr.number_sender_account = ?) " +
+                    "as sum_positive, " +
+                    "(SELECT " +
+                    "SUM(" +
+                    "CASE WHEN " +
+                    "tr.amount < 0 " +
+                    "AND tr.type_operation IN ('TRANSLATION', 'WITHDRAWAL') " +
+                    "THEN tr.amount " +
+                    "ELSE 0 END) " +
+                    "FROM transactions as tr " +
+                    "WHERE tr.status <> 'REJECTED' " +
+                    "AND tr.number_sender_account = ?)" +
+                    "as sum_negative " +
+                    "from transactions as tr " +
+                    "inner join accounts as sa on sa.number = number_sender_account " +
+                    "inner join users as asu on asu.id = id_user inner join banks as asb on asb.id = id_bank " +
+                    "inner join banks as bb on bb.id = id_beneficiary_bank " +
+                    "where " +
+                    "tr.date > ? " +
+                    "and " +
+                    "tr.date < ? " +
+                    "and number_sender_account = ?";
 }

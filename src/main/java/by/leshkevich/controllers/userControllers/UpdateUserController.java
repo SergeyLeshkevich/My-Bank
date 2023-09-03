@@ -1,8 +1,6 @@
 package by.leshkevich.controllers.userControllers;
 
-import by.leshkevich.model.Transaction;
 import by.leshkevich.model.User;
-import by.leshkevich.utils.DateManager;
 import by.leshkevich.utils.constants.AppConstant;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,13 +18,13 @@ public class UpdateUserController extends UserAbstractController {
         String login = request.getParameter(AppConstant.LOGIN_PARAMETER);
         String lastname = request.getParameter(AppConstant.LASTNAME_PARAMETER);
         PrintWriter out = response.getWriter();
-        User user= User.builder()
+        User user = User.builder()
                 .lastname(lastname)
                 .login(login)
                 .build();
-        if(userService.updateLastname(user)){
+        if (userService.updateLastname(user)) {
             out.println("status 200");
-        }else {
+        } else {
             out.println("status 500");
         }
 

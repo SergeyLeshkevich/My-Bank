@@ -4,7 +4,6 @@ package by.leshkevich.controllers.accountControllers;
 import by.leshkevich.model.Account;
 import by.leshkevich.model.Bank;
 import by.leshkevich.model.User;
-import by.leshkevich.services.AccountService;
 
 import by.leshkevich.utils.DateManager;
 import by.leshkevich.utils.constants.AppConstant;
@@ -29,7 +28,7 @@ public class AddAccountController extends AccountAbstractController {
                 .Bank(Bank.builder().id(idBank).build())
                 .User(User.builder().id(idUser).build())
                 .balance(balance)
-                .openData(new DateManager()).build();
+                .openDate(new DateManager()).build();
 
         if (accountService.save(account) != null) {
             out.println("status 200");

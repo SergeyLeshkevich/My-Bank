@@ -10,26 +10,35 @@ import by.leshkevich.services.AccountService;
 import by.leshkevich.services.BankService;
 import by.leshkevich.utils.enums.TypeOperation;
 import lombok.Data;
-import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
-
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class is the main conductor for conducting a transaction
+ */
 @Data
 public class TransactionManager {
 
+    private static final Logger logger = LogManager.getLogger(AccountService.class);
+
     private final BankService BANK_SERVICE = new BankService();
 
+    /**
+     * this method is the entry point for conducting a transaction
+     */
     public String conductTransaction(Account senderAccount, Account beneficiaryAccount,
                                      double sumOperation, String login, String passwordOperation,
                                      TypeOperation typeOperation) {
+        logger.info("начало банковской операции. Входящие параметры:{},{},{},{},{},{}", senderAccount, beneficiaryAccount, sumOperation, login, passwordOperation, typeOperation);
         String response;
-
 
         Transaction transaction = null;
         synchronized (senderAccount) {
 
             try {
-                BANK_SERVICE.checkAccountForTransaction(senderAccount, beneficiaryAccount,
+                BANK_SERVICE.validationInputParameters(senderAccount, beneficiaryAccount,
                         typeOperation, sumOperation, login, passwordOperation);
 
                 transaction = performOperation(senderAccount, beneficiaryAccount, sumOperation, typeOperation);
@@ -45,24 +54,27 @@ public class TransactionManager {
         }
     }
 
+    /**
+     * when this method is called, the process of accruing interest on the specified account is started.
+     * Interest rate is specified in conf.yml
+     */
     public void accrueInterest(Account senderAccount) {
+        logger.info("Начисление процентов: {}", senderAccount);
         YmlManager ymlManager = new YmlManager();
         double sBalance = senderAccount.getBalance();
 
         double sumOperation = getFine(sBalance,
                 Integer.parseInt(ymlManager.getValue(AppConstant.CONFIGURATION_YAML, AppConstant.ACCRUAL_PERCENTAGE)));
-
-        performOperation(senderAccount, senderAccount, sumOperation, TypeOperation.ACCRUAL_OF_INTEREST);
+        Transaction transaction = performOperation(senderAccount, senderAccount, sumOperation, TypeOperation.ACCRUAL_OF_INTEREST);
+        logger.info("Начисление процентов: {}", transaction);
     }
 
-
+    /**
+     * in this method, the distribution of transactions between banks takes place
+     */
     private Transaction performOperation(Account senderAccount, Account beneficiaryAccount, double sumOperation,
                                          TypeOperation typeOperation) {
         Transaction transaction;
-
-        System.out.println(senderAccount.getBank().getName() + " sozdaet tranzakciu " +
-                "-" + senderAccount.getNumber()
-                + "-" + Thread.currentThread().getName());
 
         transaction = BANK_SERVICE.openTransaction(senderAccount.getNumber(), beneficiaryAccount.getNumber(),
                 sumOperation, typeOperation);
@@ -92,7 +104,14 @@ public class TransactionManager {
         return transaction;
     }
 
+    /**
+     * this method is designed to calculate the amount by interest rate.
+     * The rate is specified in the file conf.yml
+     */
     private double getFine(double sum, int percent) {
-        return (Math.abs(sum) * percent) / 100;
+        logger.info("Расчет суммы начисления:{} {}", sum, percent);
+        double sumWithPercent = (Math.abs(sum) * percent) / 100;
+        logger.info("Сумма с процентом {}", sumWithPercent);
+        return sumWithPercent;
     }
 }

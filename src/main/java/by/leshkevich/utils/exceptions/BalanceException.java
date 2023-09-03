@@ -1,18 +1,17 @@
 package by.leshkevich.utils.exceptions;
 
-public class BalanceException extends Exception{
-    public BalanceException() {
-    }
-
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * class for creating new exceptions related to balance
+ */
+public class BalanceException extends Exception {
+    /**
+     * Constructs a new exception with the specified detail message.
+     *
+     * @param message
+     */
     public BalanceException(String message) {
         super(message);
-    }
-
-    public BalanceException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public BalanceException(Throwable cause) {
-        super(cause);
     }
 }

@@ -1,13 +1,8 @@
 package by.leshkevich.controllers.userControllers;
 
-
-import by.leshkevich.model.Account;
-import by.leshkevich.model.Bank;
-import by.leshkevich.model.Transaction;
 import by.leshkevich.model.User;
-import by.leshkevich.utils.DateManager;
 import by.leshkevich.utils.constants.AppConstant;
-import by.leshkevich.utils.enums.Status;
+import by.leshkevich.utils.exceptions.UserException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,16 +21,24 @@ public class AddUserController extends UserAbstractController {
         String password = request.getParameter(AppConstant.PASSWORD_OPERATION);
 
         PrintWriter out = response.getWriter();
-        User user = User.builder()
-                .login(login)
-                .firstname(lastname)
-                .lastname(firstname).build();
+        try {
+            if (!userService.checkUniqueLogin(login)) throw new UserException("login busy");
 
-        if (userService.save(user,password) >0) {
-            out.println("status 200");
-        } else {
-            out.println("status 500");
+            User user = User.builder()
+                    .login(login)
+                    .firstname(lastname)
+                    .lastname(firstname).build();
+
+            if (userService.registration(user, password)) {
+                out.println("status 200");
+            } else {
+                out.println("status 500");
+            }
+
+        } catch (UserException e) {
+            throw new RuntimeException(e);
         }
+
 
     }
 

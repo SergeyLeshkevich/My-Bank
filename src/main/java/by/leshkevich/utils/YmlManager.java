@@ -9,20 +9,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class works with yaml files
+ */
 public class YmlManager {
     Yaml yaml = new Yaml();
 
+    /**
+     * this method gets value from file .yml by key
+     */
     public String getValue(String filename, String key) {
         String s = null;
         try (FileInputStream input = new FileInputStream(filename)) {
 
             Map<String, Object> data = yaml.load(input);
-//            Map<String, String> data = new HashMap<>();
-//                    data.put("fine_percent","3");
-//                    data.put("url","jdbc:postgresql://localhost:5432/postgres");
-//                    data.put("user","postgres");
-//                    data.put("password","admin");
-//                    data.put("driver","org.postgresql.Driver");
             s = (String) data.get(key);
         } catch (IOException e) {
             e.printStackTrace();

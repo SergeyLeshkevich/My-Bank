@@ -12,10 +12,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class implements the AccountDAO interface and implements its methods for working with the database.
+ * */
 
 public class AccountPostgresDAOImpl implements AccountDAO {
+    /**
+     * get method Account object from database PostgresQL
+     */
     @Override
     public Account get(String number) throws DAOException {
         Account account = null;
@@ -36,7 +43,9 @@ public class AccountPostgresDAOImpl implements AccountDAO {
         return account;
     }
 
-
+    /**
+     * method for getting list of Accounts object by user id from database PostgresQL
+     */
     @Override
     public List<Account> getListByIdUser(int idUser) throws DAOException {
         List<Account> accountList = null;
@@ -54,7 +63,9 @@ public class AccountPostgresDAOImpl implements AccountDAO {
         return accountList;
     }
 
-
+    /**
+     * Account object save method in database PostgresQL
+     */
     @Override
     public Account save(Account account) throws DAOException {
         try (Connection cn = ConnectionManager.getConnection();
@@ -64,7 +75,7 @@ public class AccountPostgresDAOImpl implements AccountDAO {
             pst.setInt(2, account.getUser().getId());
             pst.setInt(3, account.getBank().getId());
             pst.setDouble(4, account.getBalance());
-            pst.setTimestamp(5, account.getOpenData().getDateForDB());
+            pst.setTimestamp(5, account.getOpenDate().getDateForDB());
             if (pst.executeUpdate() > 0) {
                 ResultSet rs = pst.getGeneratedKeys();
                 if (rs.next()) {
@@ -76,7 +87,9 @@ public class AccountPostgresDAOImpl implements AccountDAO {
         }
         return account;
     }
-
+    /**
+     * Account object deletion method from database PostgresQL
+     */
     @Override
     public boolean delete(int accountId) throws DAOException {
         boolean isDel = false;
@@ -94,6 +107,9 @@ public class AccountPostgresDAOImpl implements AccountDAO {
         return isDel;
     }
 
+    /**
+     * method for updating the balance field of the Account object from database PostgresQL
+     */
     @Override
     public boolean updateBalance(String number, double newBalance) throws DAOException {
         boolean isUpdate = false;
@@ -114,6 +130,9 @@ public class AccountPostgresDAOImpl implements AccountDAO {
         return isUpdate;
     }
 
+    /**
+     * method for getting a list of all Account objects from database PostgresQL
+     */
     @Override
     public Map<String,Account> getAllAccounts() throws DAOException {
         Map<String,Account> accountMap;
@@ -130,8 +149,12 @@ public class AccountPostgresDAOImpl implements AccountDAO {
         return accountMap;
     }
 
-
-
+    /**
+     * method for obtaining the creation of a list of Account objects by incoming parameters
+     * @param pst1 PreparedStatement to get list of Account objects
+     * @param pst2 PreparedStatement to get the User object
+     * @param pst3 PreparedStatement to get the Bank object
+     */
     private List<Account> accountListFabric(PreparedStatement pst1, PreparedStatement pst2, PreparedStatement pst3) throws SQLException {
         List<Account> accountList = new ArrayList<>();
         User user = null;

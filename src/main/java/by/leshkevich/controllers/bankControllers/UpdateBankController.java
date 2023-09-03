@@ -1,6 +1,5 @@
 package by.leshkevich.controllers.bankControllers;
 
-import by.leshkevich.controllers.accountControllers.AccountAbstractController;
 import by.leshkevich.model.Bank;
 import by.leshkevich.utils.constants.AppConstant;
 import jakarta.servlet.annotation.WebServlet;

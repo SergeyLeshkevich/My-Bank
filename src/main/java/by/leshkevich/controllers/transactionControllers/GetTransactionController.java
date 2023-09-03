@@ -16,7 +16,7 @@ public class GetTransactionController extends TransactionAbstractController {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int number = Integer.parseInt(request.getParameter(AppConstant.NUMBER_PARAMETER));
-        Transaction transaction=transactionService.getTransaction(number);
+        Transaction transaction = transactionService.getTransaction(number);
         String json = GSON.toJson(transaction);
         PrintWriter out = response.getWriter();
         out.println(json);

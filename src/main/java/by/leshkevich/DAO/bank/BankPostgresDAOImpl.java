@@ -7,7 +7,15 @@ import by.leshkevich.utils.exceptions.DAOException;
 
 import java.sql.*;
 
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class implements the BankDAO interface and implements its methods for working with the database.
+ * */
 public class BankPostgresDAOImpl implements BankDAO {
+    /**
+     * Bank object deletion method from database PostgresQL
+     */
     @Override
     public boolean delete(int id) throws DAOException {
         boolean isDel = false;
@@ -25,6 +33,9 @@ public class BankPostgresDAOImpl implements BankDAO {
         return isDel;
     }
 
+    /**
+     * Bank object save method in database PostgresQL
+     */
     @Override
     public Bank save(Bank bank) throws DAOException {
         try (Connection cn = ConnectionManager.getConnection();
@@ -43,6 +54,9 @@ public class BankPostgresDAOImpl implements BankDAO {
         return bank;
     }
 
+    /**
+     * method for updating the name field of the Bank object from database PostgresQL
+     */
     @Override
     public boolean update(Bank bank) throws DAOException {
         boolean isUpdate = false;
@@ -64,6 +78,9 @@ public class BankPostgresDAOImpl implements BankDAO {
         return isUpdate;
     }
 
+    /**
+     * get method Bank object object from database PostgresQL
+     */
     @Override
     public Bank get(int id) throws DAOException {
         Bank bank = null;

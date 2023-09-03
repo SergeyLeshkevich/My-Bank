@@ -3,6 +3,11 @@ package by.leshkevich.model;
 import lombok.*;
 
 
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class is the entity to hold the User object
+ * */
 @Getter
 @Setter
 @Builder

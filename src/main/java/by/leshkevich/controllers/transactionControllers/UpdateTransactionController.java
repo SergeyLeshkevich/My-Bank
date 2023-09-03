@@ -19,13 +19,13 @@ public class UpdateTransactionController extends TransactionAbstractController {
         int number = Integer.parseInt(request.getParameter(AppConstant.ID_PARAMETER));
         String status = request.getParameter(AppConstant.STATUS_PARAMETER);
         PrintWriter out = response.getWriter();
-        Transaction transaction=Transaction.builder()
+        Transaction transaction = Transaction.builder()
                 .id(number)
                 .dataOperation(new DateManager())
                 .status(status).build();
-        if(transactionService.updateStatus(transaction)){
+        if (transactionService.updateStatus(transaction)) {
             out.println("status 200");
-        }else {
+        } else {
             out.println("status 500");
         }
 

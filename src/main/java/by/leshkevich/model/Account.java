@@ -3,6 +3,11 @@ package by.leshkevich.model;
 import by.leshkevich.utils.DateManager;
 import lombok.*;
 
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class is the entity to hold the Account object
+ * */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +21,6 @@ public class Account {
     private User User;
     private Bank Bank;
     private double balance;
-    private DateManager openData;
+    private DateManager openDate;
 
 }

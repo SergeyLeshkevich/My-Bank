@@ -1,0 +1,11 @@
+ _________________________________________
+|                 Bank Check              |
+| Check:                              3595|
+| 2023-09-03                      14:41:01|
+| Transaction type:             WITHDRAWAL|
+| Sender's bank:               Clever-Bank|
+| Payee's bank:                Clever-Bank|
+| Sender's account:               46535465|
+| Beneficiary's account:          46535465|
+| Sum:                             -150,00|
+|_________________________________________|

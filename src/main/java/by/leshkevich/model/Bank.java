@@ -10,7 +10,11 @@ import lombok.*;
 
 import java.util.Map;
 
-
+/**
+ * @author S.Leshkevich
+ * @version 1.0
+ * this class is the entity to hold the Bank object
+ */
 @Data
 @Builder
 @AllArgsConstructor

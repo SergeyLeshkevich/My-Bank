@@ -1,8 +1,6 @@
 package by.leshkevich.controllers.userControllers;
 
 
-import by.leshkevich.controllers.transactionControllers.TransactionAbstractController;
-import by.leshkevich.model.Transaction;
 import by.leshkevich.model.User;
 import by.leshkevich.utils.constants.AppConstant;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,7 +15,7 @@ public class GetUserController extends UserAbstractController {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String login = request.getParameter(AppConstant.LOGIN_PARAMETER);
-        User user=userService.getUser(login);
+        User user = userService.getUser(login);
         String json = GSON.toJson(user);
         PrintWriter out = response.getWriter();
         out.println(json);

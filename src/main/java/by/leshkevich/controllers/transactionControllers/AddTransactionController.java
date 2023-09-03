@@ -21,14 +21,14 @@ public class AddTransactionController extends TransactionAbstractController {
 
         String numberSA = request.getParameter(AppConstant.NUMBER_ACCOUNT_SENDER_BANK_PARAMETER);
         String numberDA = request.getParameter(AppConstant.NUMBER_ACCOUNT_BENEFICIARY_BANK_PARAMETER);
-        String typeOperation = request.getParameter(AppConstant.TYPE_OPERATION);
+        String typeOperation = request.getParameter(AppConstant.TYPE_OPERATION_PARAMETER);
         double amount = Double.parseDouble(request.getParameter(AppConstant.AMOUNT_PARAMETER));
         int idBankS = Integer.parseInt(request.getParameter(AppConstant.ID_SENDER_BANK_PARAMETER));
         int idBankD = Integer.parseInt(request.getParameter(AppConstant.ID_BENEFICIARY_BANK_PARAMETER));
         String status = Status.REJECTED.getMessage();
 
         PrintWriter out = response.getWriter();
-        Transaction transaction= Transaction.builder()
+        Transaction transaction = Transaction.builder()
                 .senderAccount(Account.builder().number(numberSA).build())
                 .beneficiaryAccount(Account.builder().number(numberDA).build())
                 .typeOperation(typeOperation)
@@ -36,7 +36,8 @@ public class AddTransactionController extends TransactionAbstractController {
                 .senderBank(Bank.builder().id(idBankS).build())
                 .beneficiaryBank(Bank.builder().id(idBankD).build())
                 .status(Status.IN_PROCESSING.getMessage())
-                .dataOperation(new DateManager()).build();
+                .dataOperation(new DateManager())
+                .status(status).build();
 
         if (transactionService.saveTransaction(transaction) != null) {
             out.println("status 200");

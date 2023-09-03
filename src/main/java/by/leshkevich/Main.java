@@ -1,209 +1,172 @@
 package by.leshkevich;
 
-import by.leshkevich.utils.ScannerManager;
-import by.leshkevich.utils.TransactionManager;
-import by.leshkevich.utils.constants.AppConstant;
-import by.leshkevich.utils.exceptions.AuthorisationException;
 import by.leshkevich.model.Account;
-import by.leshkevich.model.User;
+import by.leshkevich.model.Bank;
 import by.leshkevich.services.AccountService;
-import by.leshkevich.services.UserService;
-import by.leshkevich.utils.ViewForConsole;
+import by.leshkevich.utils.TransactionManager;
 import by.leshkevich.utils.enums.TypeOperation;
+import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+/**
+ * This class is the main entry point to the application. For the sake of simplicity in the demonstration,
+ * classes that inherit from the Thread class and implement its run() method were written in one file.
+ * The class demonstrates the operation of withdrawal, deposit, and transfer to the account of its own
+ * and another bank in a multi-threaded mode of operation
+ */
 public class Main {
 
+    private static Logger logger = LogManager.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
+        TransactionManager transactionManager = new TransactionManager();
+
+        Account accountS = Account.builder()
+                .number("46535465")
+                .Bank(Bank.builder().name("Clever-Bank").build()).build();
+        Account accountBClever = Account.builder()
+                .number("32246546")
+                .Bank(Bank.builder().name("Alfa-Bank").build()).build();
+
+        Account accountBOther = Account.builder()
+                .number("64674764")
+                .Bank(Bank.builder().name("Alfa-Bank").build()).build();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
+
+        executorService.execute(new Thread1(transactionManager, accountS, accountBClever));
+        executorService.execute(new Thread2(transactionManager, accountS, accountBOther));
+        executorService.execute(new Thread3(transactionManager, accountS, accountS));
+        executorService.execute(new Thread4(transactionManager, accountS, accountS));
+        executorService.execute(new ThreadBalanceManager(transactionManager, true));
+
+    }
+}
+
+/**
+ * Class responsible for transferring money to the account of own bank.
+ */
+@AllArgsConstructor
+class Thread1 extends Thread {
+    private TransactionManager transactionManager;
+    private Account accountS;
+    private Account accountB;
+
+    @Override
+    public void run() {
+        System.out.println(transactionManager.conductTransaction(accountS,
+                accountB,
+                100,
+                "user5",
+                "5",
+                TypeOperation.TRANSLATION));
+
+    }
+}
+
+/**
+ * Class responsible for transferring money to the account of another bank.
+ */
+@AllArgsConstructor
+class Thread2 extends Thread {
+    private volatile TransactionManager transactionManager;
+    private Account accountS;
+    private Account accountB;
+
+    @Override
+    public void run() {
+        System.out.println(transactionManager.conductTransaction(accountS,
+                accountB,
+                100,
+                "user15",
+                "15",
+                TypeOperation.TRANSLATION));
+
+    }
+}
+
+/**
+ * Class responsible for depositing money into the account.
+ */
+@AllArgsConstructor
+class Thread3 extends Thread {
+    private volatile TransactionManager transactionManager;
+    private Account accountS;
+    private Account accountB;
+
+    @Override
+    public void run() {
+        System.out.println(transactionManager.conductTransaction(accountS,
+                accountB,
+                150,
+                "user10",
+                "10",
+                TypeOperation.REFILL));
+
+    }
+}
+
+/**
+ * Class responsible for withdrawing money from the account.
+ */
+@AllArgsConstructor
+class Thread4 extends Thread {
+    private volatile TransactionManager transactionManager;
+    private Account accountS;
+    private Account accountB;
+
+    @Override
+    public void run() {
+        System.out.println(transactionManager.conductTransaction(accountS,
+                accountB,
+                150,
+                "user10",
+                "10",
+                TypeOperation.WITHDRAWAL));
+
+    }
+}
+
+/**
+ * Class responsible for interest calculation on bank deposits.
+ */
+@AllArgsConstructor
+class ThreadBalanceManager extends Thread {
+    private final AccountService ACCOUNT_SERVICE = new AccountService();
+    private volatile TransactionManager transactionManager;
+    private boolean stopBalanceManager;
 
 
-        boolean flag_exit = true;
-        String menu1;
-        boolean menu2 = true;
-        UserService userService = new UserService();
-        Scanner console=new Scanner(System.in);
-        AccountService accountService = new AccountService();
-        List<Account> accountList = null;
-        TransactionManager transactionManager=new TransactionManager();
+    @Override
+    public void run() {
 
-        while (flag_exit) {
-            ViewForConsole.showMenu1View();
-            menu1 = ScannerManager.nextLine(console);
-            switch (menu1) {
-                //авторизация
-                case "1": {
-                    boolean auth_flag = true;
-                    while (auth_flag) {
-                        System.out.println("Vvedite login:");
-                        String login = ScannerManager.nextLine(console);
+        boolean isLastDayOfMonth = false;
 
-                        System.out.println("Vvedite parol:");
-                        String password = ScannerManager.nextLine(console);
+        while (isLastDayOfMonth || stopBalanceManager) {
+            System.out.println("interest calculation check");
+            LocalDate today = LocalDate.now();
+            int dayOfMonth = today.getDayOfMonth();
+            int lastDayOfMonth = today.lengthOfMonth();
 
-                        boolean authorisation = false;
-                        try {
-                            authorisation = userService.authorisation(login, password);
-                        } catch (AuthorisationException e) {
-                            System.out.println(e.getMessage());
-                        }
-
-                        if (authorisation) {
-                            User user = userService.getUser(login);
-
-                            while (menu2) {
-                                accountList = accountService.getListByIdUser(user.getId());
-                                accountList.forEach(ViewForConsole::showAccountView);
-
-                                System.out.println("Vvedite nomer scheta dlia prodolgenia");
-                                String numberAccount = ScannerManager.nextLine(console);
-
-                                Account account = accountService.getAccountByNumberAndIdUser(numberAccount, user.getId());
-                                while (account == null) {
-                                    System.out.println("schet ne naiden");
-                                    System.out.println("Vvedite nomer scheta dlia prodolgenia");
-                                    numberAccount = ScannerManager.nextLine(console);
-                                    account = accountService.getAccountByNumberAndIdUser(numberAccount, user.getId());
-                                }
-                                ViewForConsole.showAccountView(account);
-                                ViewForConsole.showMenu2View();
-
-
-                                double sumOperation;
-                                String beneficiaryNumberAccount;
-                                String passwordOperation;
-
-                                switch (ScannerManager.nextLine(console)) {
-
-
-                                    //Sniatie
-                                    case "1": {
-                                        sumOperation = ViewForConsole.enterAmount(console);
-                                        passwordOperation = ViewForConsole.enterPassword(console);
-
-
-                                        System.out.println(transactionManager.conductTransaction(account, account,
-                                                sumOperation, login, passwordOperation, TypeOperation.REFILL));
-                                    }
-                                    break;
-//popolnenie
-                                    case "2": {
-                                        sumOperation = ViewForConsole.enterAmount(console);
-                                        passwordOperation = ViewForConsole.enterPassword(console);
-
-                                        System.out.println(transactionManager.conductTransaction(account, account,
-                                                sumOperation, login, passwordOperation, TypeOperation.WITHDRAWAL));
-                                    }
-                                    break;
-//Perevod na kartu Clever-Bank
-                                    case "3": {
-                                        System.out.println("Vvedite nomer scheta na kotorii perevesty:");
-                                        beneficiaryNumberAccount = ScannerManager.nextLine(console);
-                                        Account accountBeneficiary = accountService.getAccountByNumber(beneficiaryNumberAccount);
-
-                                        if (accountBeneficiary.getBank().getName().equals(AppConstant.CLEVER_BANK)) {
-                                            sumOperation = ViewForConsole.enterAmount(console);
-                                            passwordOperation = ViewForConsole.enterPassword(console);
-
-                                            System.out.println(transactionManager.conductTransaction(account, accountBeneficiary,
-                                                    sumOperation, login, passwordOperation, TypeOperation.REFILL));
-                                        } else {
-                                            System.out.println("Schet ne prinadlegit " + AppConstant.CLEVER_BANK);
-                                        }
-                                    }
-                                    break;
-//Perevod na kartu drugovo banka
-                                    case "4": {
-                                        System.out.println("Vvedite nomer scheta na kotorii perevesty:");
-                                        beneficiaryNumberAccount = ScannerManager.nextLine(console);
-                                        Account accountBeneficiary = accountService.getAccountByNumber(beneficiaryNumberAccount);
-
-                                        if (!accountBeneficiary.getBank().getName().equals(AppConstant.CLEVER_BANK)) {
-
-                                            sumOperation = ViewForConsole.enterAmount(console);
-                                            passwordOperation = ViewForConsole.enterPassword(console);
-
-                                            System.out.println(transactionManager.conductTransaction(account, accountBeneficiary,
-                                                    sumOperation, login, passwordOperation, TypeOperation.REFILL));
-                                        } else {
-                                            System.out.println("Schet prinadlegit " + AppConstant.CLEVER_BANK);
-                                        }
-                                    }
-                                    break;
-
-                                    case "5": {
-
-                                    }
-
-                                    default: {
-                                        System.out.println("Neverni parameter");
-                                    }
-                                }
-                            }
-
-                        } else {
-                            System.out.println("Client ne naiden!");
-                            System.out.println("Vvedite 1 dlia vihoda v glavnoe menu ili pustoe soobschenie dlia povtornoi popitki");
-                            if (ScannerManager.nextLine(console).equals("1")) {
-                                auth_flag = false;
-                            }
-                        }
-
-
-                    }
-                }
-                break;
-
-                //регистрация
-                case "2": {
-
-                    System.out.println("Vvedite imia:");
-                    String firstname = ScannerManager.nextLine(console);
-
-                    System.out.println("Vvedite familiu:");
-                    String lastname = ScannerManager.nextLine(console);
-
-                    System.out.println("Vvedite login:");
-                    String login = ScannerManager.nextLine(console);
-
-                    while (!userService.checkUniqueLogin(login)) {
-                        System.out.println("Etot login zaniat. Vvedite drugoi:");
-                        login = ScannerManager.nextLine(console);
-                    }
-
-                    System.out.println("Vvedite parol:");
-                    String password = ScannerManager.nextLine(console);
-
-                    User user = User.builder()
-                            .firstname(firstname)
-                            .lastname(lastname)
-                            .login(login).build();
-
-                    if (userService.registration(user, password)) {
-                        System.out.println("Registracia proshla uspeshno");
-                    } else {
-                        System.out.println("Neuspeshnaia registracia. povtorite popitku");
-                    }
-
-                }
-                break;
-
-                //назад
-                case "3": {
-                }
-                break;
-
-                case "4": {
-                    console.close();
-                    flag_exit = false;
-                }
-                break;
-
-                default: {
-                    System.out.println("Neverni parameter");
-                }
-
+            if ((dayOfMonth == lastDayOfMonth) && !isLastDayOfMonth) {
+                System.out.println("interest calculation operation started");
+                ACCOUNT_SERVICE.getAllAccounts().forEach((k, v) ->
+                        transactionManager.accrueInterest(v));
+                isLastDayOfMonth = true;
+                System.out.println("interest calculation completed");
+            } else if (dayOfMonth != lastDayOfMonth) {
+                System.out.println("interest calculation rejected");
+                isLastDayOfMonth = false;
+            }
+            try {
+                sleep(30000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
